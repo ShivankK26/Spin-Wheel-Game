@@ -58,12 +58,13 @@ function Wheel({ segments }) {
     }
 
     // Save to database
-    axios.post('http://localhost:5173/api/save', { segments, result: finalResult })
-    .then(response => {
-      console.log(response.data.message);
-    })
-    .catch(error => {
-      console.error('There was an error saving the data!', error);
+    axios.post('http://localhost:5173/api/save', {
+      segments,
+      result: segments[winningSegment],
+    }).then(response => {
+      console.log('Data saved:', response.data);
+    }).catch(error => {
+      console.error('Error saving data:', error);
     });
   };
  

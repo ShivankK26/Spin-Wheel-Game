@@ -1,40 +1,31 @@
+// server/index.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const connection = require('./db/config');
+const { PrismaClient } = require('@prisma/client');
 
 const app = express();
-const PORT = 5173;
+const prisma = new PrismaClient();
 
-app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.json());
 
-// Route to save segments and result
-app.post('/api/save', (req, res) => {
+app.post('/api/save', async (req, res) => {
   const { segments, result } = req.body;
-  const segmentsString = JSON.stringify(segments);
-  connection.query(
-    'INSERT INTO segments (segments, result) VALUES (?, ?)',
-    [segmentsString, result],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.status(200).json({ message: 'Data saved successfully' });
-    }
-  );
+  try {
+    await prisma.spin.create({
+      data: {
+        segments,
+        result,
+      },
+    });
+    res.status(200).json({ message: 'Data inserted successfully' });
+  } catch (error) {
+    console.error('Error inserting data: ', error);
+    res.status(500).json({ message: 'Error inserting data' });
+  }
 });
 
-// Route to get all saved segments and results
-app.get('/api/results', (req, res) => {
-  connection.query('SELECT * FROM segments', (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json(results);
-  });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(5173, () => {
+  console.log('Server running on port 5173');
 });
