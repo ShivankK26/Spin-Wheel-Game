@@ -99,4 +99,3 @@ To connect the MySQL database to Aiven:
    ```
 
 Replace `username`, `password`, `aiven-hostname`, `port`, and `database_name` with your Aiven service details.
-```
