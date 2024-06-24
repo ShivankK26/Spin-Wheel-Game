@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
 
 function Wheel({ segments }) {
   const canvasRef = useRef(null);
@@ -55,18 +56,19 @@ function Wheel({ segments }) {
       const winningSegment = (segments.length - winningIndex) % segments.length;
       const correctedWinningSegment = (winningSegment + segments.length - 1) % segments.length; // Adjust for pointer position
       setResult(segments[correctedWinningSegment]);
+  
+      // Save to database
+      axios.post('/api/save', {
+        segments: JSON.stringify(segments), // Convert segments to a string if necessary
+        result: segments[correctedWinningSegment],
+      }).then(response => {
+        console.log('Data saved:', response.data);
+      }).catch(error => {
+        console.error('Error saving data:', error);
+      });
     }
-
-    // Save to database
-    axios.post('http://localhost:5173/api/save', {
-      segments,
-      result: segments[winningSegment],
-    }).then(response => {
-      console.log('Data saved:', response.data);
-    }).catch(error => {
-      console.error('Error saving data:', error);
-    });
   };
+  
  
 
   useEffect(() => {

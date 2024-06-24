@@ -7,9 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Spin {
   id        Int      @id @default(autoincrement())
-  segments  Json
+  segments  String
   result    String
   createdAt DateTime @default(now())
 }
+
